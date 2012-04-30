@@ -1,0 +1,27 @@
+{
+    "name": "mopa/composer-bundle",
+    "type": "symfony-bridge",
+    "description": "Symfony2 Composer Bridge",
+    "keywords": ["symfony2", "composer"],
+    "homepage": "http://bootstrap.mohrenweiserpartner.de",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Philipp A. Mohrenweiser",
+            "email": "phiamo@googlemail.com"
+        },
+        {
+            "name": "Community contributions",
+            "homepage": "https://github.com/phiamo/MopaComposerBridge/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+    },
+    "autoload": {
+        "psr-0": {
+            "Mopa\\Bridge\\Composer": ""
+        }
+    },
+    "target-dir": "Mopa/Bridge/Composer"
+}
