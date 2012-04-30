@@ -1,5 +1,5 @@
 {
-    "name": "mopa/composer-bundle",
+    "name": "mopa/composer-bridge",
     "type": "symfony-bridge",
     "description": "Symfony2 Composer Bridge",
     "keywords": ["symfony2", "composer"],
