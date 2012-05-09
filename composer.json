@@ -20,8 +20,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Mopa\\Bridge\\Composer": ""
+            "Mopa\\Bridge\\Composer": "src/"
         }
-    },
-    "target-dir": "Mopa/Bridge/Composer"
+    }
 }
