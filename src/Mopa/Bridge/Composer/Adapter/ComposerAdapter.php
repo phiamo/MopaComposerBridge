@@ -64,7 +64,7 @@ class ComposerAdapter{
      * @param OutputInterface $output
      * @param unknown_type $pathToComposer
      */
-    public static function getComposer(InputInterface $input, OutputInterface $output, $pathToComposer = null){
+    public static function getComposer(InputInterface $input, OutputInterface $output, $pathToComposer = null, $required = true){
         if(null === self::$composer){
         	self::checkComposer($pathToComposer);
             $output->write("Initializing composer ... ");
