@@ -10,26 +10,26 @@ use Composer\Package\PackageInterface;
 class ComposerPathFinder{
     protected $composer;
 
-    public function __construct(Composer $composer){
+    public function __construct(Composer $composer) {
         $this->composer = $composer;
     }
-    public function getSymlinkFromComposer($targetPackageName, $sourcePackageName, array $options){
-        if(null === $targetPackage = $this->findPackage($targetPackageName)){
+    public function getSymlinkFromComposer($targetPackageName, $sourcePackageName, array $options) {
+        if (null === $targetPackage = $this->findPackage($targetPackageName)) {
             throw new \Exception("Could not find targetPackage: " . $targetPackageName . ": " . " with composer");
         }
-        if(!$this->isPackageInstalled($targetPackage)){
+        if (!$this->isPackageInstalled($targetPackage)) {
             throw new \Exception("Package: " . $targetPackageName . " is not installed!");
         }
-        if(null === $sourcePackage = $this->findPackage($sourcePackageName)){
+        if (null === $sourcePackage = $this->findPackage($sourcePackageName)) {
             throw new \Exception("Could not find sourcePackage: " . $sourcePackageName . " with composer");
         }
-        if(!$this->isPackageInstalled($sourcePackage)){
+        if (!$this->isPackageInstalled($sourcePackage)) {
             throw new \Exception("Package: " . $sourcePackageName . " is not installed!");
         }
         return $this->generateSymlink($targetPackage, $sourcePackage, $options);
     }
 
-    protected function isPackageInstalled(PackageInterface $package){
+    protected function isPackageInstalled(PackageInterface $package) {
         foreach ($this->composer->getRepositoryManager()
                 ->getLocalRepositories() as $repo) {
             $installer = $this->composer->getInstallationManager()
@@ -44,8 +44,8 @@ class ComposerPathFinder{
     protected function findPackage($packageName)
     {
         $packages = $this->composer->getRepositoryManager()->findPackages($packageName, null);
-        foreach($packages as $package){
-            if($this->isPackageInstalled($package)){
+        foreach ($packages as $package) {
+            if ($this->isPackageInstalled($package)) {
                 return $package;
             }
         }
@@ -82,7 +82,7 @@ class ComposerPathFinder{
         }
         return str_pad("", count($arFrom) * 3, '..'.$ps).implode($ps, $arTo);
     }
-    protected function getDefaultOptions(){
+    protected function getDefaultOptions() {
         return array(
             'targetSuffix' => "",
             'sourcePrefix' => "",

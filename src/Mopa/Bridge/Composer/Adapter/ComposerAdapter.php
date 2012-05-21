@@ -17,21 +17,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ComposerAdapter{
     protected static $composer;
     protected static $application;
-	/**
-	 * Find a composer.phar in given path or in environment
-	 *
-	 * @param unknown_type $pathToComposer
-	 */
+    /**
+     * Find a composer.phar in given path or in environment
+     *
+     * @param unknown_type $pathToComposer
+     */
     public static function whichComposer($pathToComposer)
     {
-        if(file_exists($pathToComposer)){
+        if (file_exists($pathToComposer)) {
             return $pathToComposer;
         }
         $pathToComposer = exec("which composer.phar");
-        if(file_exists($pathToComposer)){
+        if (file_exists($pathToComposer)) {
             return $pathToComposer;
         }
-        if(file_exists("composer.phar")){
+        if (file_exists("composer.phar")) {
             return "composer.phar";
         }
         return false;
@@ -42,20 +42,20 @@ class ComposerAdapter{
      * @param InputInterface $input
      * @param OutputInterface $output
      */
-    protected static function createComposer(InputInterface $input, OutputInterface $output){
-    	$HelperSet = new HelperSet();
-    	return Composer\Factory::create(
-    			new Composer\IO\ConsoleIO($input, $output, $HelperSet)
-    	);
+    protected static function createComposer(InputInterface $input, OutputInterface $output) {
+        $HelperSet = new HelperSet();
+        return Composer\Factory::create(
+                new Composer\IO\ConsoleIO($input, $output, $HelperSet)
+        );
     }
-    public static function checkComposer($pathToComposer = null){
-    	if(!class_exists("Composer\Factory")){
-    		if(false === $pathToComposer = self::whichComposer($pathToComposer)){
-    			throw new \RuntimeException("Could not find composer.phar");
-    		}
-    		\Phar::loadPhar($pathToComposer, 'composer.phar');
-    		include_once("phar://composer.phar/src/bootstrap.php");
-    	}
+    public static function checkComposer($pathToComposer = null) {
+        if (!class_exists("Composer\Factory")) {
+            if (false === $pathToComposer = self::whichComposer($pathToComposer)) {
+                throw new \RuntimeException("Could not find composer.phar");
+            }
+            \Phar::loadPhar($pathToComposer, 'composer.phar');
+            include_once("phar://composer.phar/src/bootstrap.php");
+        }
     }
     /**
      * Returns a instance of composer
@@ -64,12 +64,12 @@ class ComposerAdapter{
      * @param OutputInterface $output
      * @param unknown_type $pathToComposer
      */
-    public static function getComposer(InputInterface $input, OutputInterface $output, $pathToComposer = null, $required = true){
-        if(null === self::$composer){
-        	self::checkComposer($pathToComposer);
+    public static function getComposer(InputInterface $input, OutputInterface $output, $pathToComposer = null, $required = true) {
+        if (null === self::$composer) {
+            self::checkComposer($pathToComposer);
             $output->write("Initializing composer ... ");
             try {
-            	self::$composer = self::createComposer($input, $output);
+                self::$composer = self::createComposer($input, $output);
             } catch (\InvalidArgumentException $e) {
                 if ($required) {
                     $output->write($e->getMessage());
