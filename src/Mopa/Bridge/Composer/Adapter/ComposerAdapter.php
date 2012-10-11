@@ -27,11 +27,19 @@ class ComposerAdapter{
         if (file_exists($pathToComposer)) {
             return $pathToComposer;
         }
-        $pathToComposer = exec("which composer.phar");
-        if (file_exists($pathToComposer)) {
-            return $pathToComposer;
-        }
-        if (file_exists("composer.phar")) {
+
+		$composerExecs = array('composer.phar', 'composer');
+		
+		foreach($composerExecs as $composerExec){
+			
+	        $pathToComposer = exec(sprintf("which %s", $composerExec));
+	
+	        if (file_exists($pathToComposer)) {
+	            return $pathToComposer;
+	        }
+		}
+		
+		if (file_exists("composer.phar")) {
             return "composer.phar";
         }
         return false;
