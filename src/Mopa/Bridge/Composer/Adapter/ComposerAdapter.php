@@ -27,7 +27,11 @@ class ComposerAdapter{
         if (file_exists($pathToComposer)) {
             return $pathToComposer;
         }
-
+        // check first in local dir
+		if (file_exists("composer.phar")) {
+            return "composer.phar";
+        }
+        
 		$composerExecs = array('composer.phar', 'composer');
 		
 		foreach($composerExecs as $composerExec){
@@ -39,9 +43,6 @@ class ComposerAdapter{
 	        }
 		}
 		
-		if (file_exists("composer.phar")) {
-            return "composer.phar";
-        }
         return false;
     }
     /**
