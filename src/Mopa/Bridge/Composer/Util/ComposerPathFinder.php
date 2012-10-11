@@ -43,7 +43,7 @@ class ComposerPathFinder{
      */
     protected function findPackage($packageName)
     {
-        $packages = $this->composer->getRepositoryManager()->findPackages($packageName, null);
+        $packages = $this->composer->getRepositoryManager()->getLocalRepository()->findPackages($packageName, null);
         foreach ($packages as $package) {
             if ($this->isPackageInstalled($package)) {
                 return $package;
