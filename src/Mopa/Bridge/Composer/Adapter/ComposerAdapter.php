@@ -9,7 +9,7 @@ use Composer\IO\IOInterface;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
+use \Symfony\Component\ClassLoader\UniversalClassLoader;
 /**
  * ComposerAdapter to support Composer in symfony2 console apps
  * If Composer is not installed via vendors it checks for a composer.phar in $pathToComposer and environment
@@ -56,13 +56,25 @@ class ComposerAdapter{
                 new Composer\IO\ConsoleIO($input, $output, $HelperSet)
         );
     }
+    /**
+     * Check for composer in Namespace
+     * and include via phar if possible
+     */
     public static function checkComposer($pathToComposer = null) {
         if (!class_exists("Composer\Factory")) {
             if (false === $pathToComposer = self::whichComposer($pathToComposer)) {
                 throw new \RuntimeException("Could not find composer.phar");
             }
             \Phar::loadPhar($pathToComposer, 'composer.phar');
-            include_once("phar://composer.phar/src/bootstrap.php");
+            $loader = new UniversalClassLoader();
+            $namespaces = include("phar://composer.phar/vendor/composer/autoload_namespaces.php");
+            $loader->registerNamespaces(array_merge(
+                array(
+                    'Composer' => "phar://composer.phar/src/"
+                ), 
+                $namespaces
+            ));
+            $loader->register(true);
         }
     }
     /**
