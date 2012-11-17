@@ -17,14 +17,8 @@ class ComposerPathFinder{
         if (null === $targetPackage = $this->findPackage($targetPackageName)) {
             throw new \Exception("Could not find targetPackage: " . $targetPackageName . ": " . " with composer");
         }
-        if (!$this->isPackageInstalled($targetPackage)) {
-            throw new \Exception("Package: " . $targetPackageName . " is not installed!");
-        }
         if (null === $sourcePackage = $this->findPackage($sourcePackageName)) {
             throw new \Exception("Could not find sourcePackage: " . $sourcePackageName . " with composer");
-        }
-        if (!$this->isPackageInstalled($sourcePackage)) {
-            throw new \Exception("Package: " . $sourcePackageName . " is not installed!");
         }
         return $this->generateSymlink($targetPackage, $sourcePackage, $options);
     }
