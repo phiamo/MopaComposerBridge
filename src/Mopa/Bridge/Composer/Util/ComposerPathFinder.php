@@ -7,13 +7,16 @@ use Composer\Package\PackageInterface;
 /**
  * ComposerPathFinder get Pathes from one to another package
  */
-class ComposerPathFinder{
+class ComposerPathFinder
+{
     protected $composer;
 
-    public function __construct(Composer $composer) {
+    public function __construct(Composer $composer)
+    {
         $this->composer = $composer;
     }
-    public function getSymlinkFromComposer($targetPackageName, $sourcePackageName, array $options) {
+    public function getSymlinkFromComposer($targetPackageName, $sourcePackageName, array $options)
+    {
         if (null === $targetPackage = $this->findPackage($targetPackageName)) {
             throw new \Exception("Could not find targetPackage: " . $targetPackageName . ": " . " with composer");
         }
@@ -26,16 +29,20 @@ class ComposerPathFinder{
         if (!$this->isPackageInstalled($sourcePackage)) {
             throw new \Exception("Package: " . $sourcePackageName . " is not installed!");
         }
+
         return $this->generateSymlink($targetPackage, $sourcePackage, $options);
     }
 
-    protected function isPackageInstalled(PackageInterface $package) {
+    protected function isPackageInstalled(PackageInterface $package)
+    {
         foreach ($this->composer->getRepositoryManager()
                 ->getLocalRepositories() as $repo) {
             $installer = $this->composer->getInstallationManager()
                                 ->getInstaller($package->getType());
+
             return $installer->isInstalled($repo, $package);
         }
+
         return false;
     }
     /**
@@ -66,23 +73,25 @@ class ComposerPathFinder{
         }
         // add target suffix
         $symlinkName = $symlinkName . $options['targetSuffix'];
+
         return array($symlinkTarget, $symlinkName);
     }
     /**
      * borrowed from http://www.php.net/manual/de/function.realpath.php#105876
      */
-    function generateRelativePath($from, $to, $ps = DIRECTORY_SEPARATOR)
+    public function generateRelativePath($from, $to, $ps = DIRECTORY_SEPARATOR)
     {
         $arFrom = explode($ps, rtrim($from, $ps));
         $arTo = explode($ps, rtrim($to, $ps));
-        while(count($arFrom) && count($arTo) && ($arFrom[0] == $arTo[0]))
-        {
+        while (count($arFrom) && count($arTo) && ($arFrom[0] == $arTo[0])) {
             array_shift($arFrom);
             array_shift($arTo);
         }
+
         return str_pad("", count($arFrom) * 3, '..'.$ps).implode($ps, $arTo);
     }
-    protected function getDefaultOptions() {
+    protected function getDefaultOptions()
+    {
         return array(
             'targetSuffix' => "",
             'sourcePrefix' => "",

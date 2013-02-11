@@ -1,20 +1,18 @@
 <?php
 namespace Mopa\Bridge\Composer\Adapter;
 
-
 use Composer;
-use Composer\Command;
 use Composer\Console\Application;
-use Composer\IO\IOInterface;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\ClassLoader\UniversalClassLoader;
+use Symfony\Component\ClassLoader\UniversalClassLoader;
 /**
  * ComposerAdapter to support Composer in symfony2 console apps
  * If Composer is not installed via vendors it checks for a composer.phar in $pathToComposer and environment
  */
-class ComposerAdapter{
+class ComposerAdapter
+{
     protected static $composer;
     protected static $application;
     /**
@@ -28,31 +26,33 @@ class ComposerAdapter{
             return $pathToComposer;
         }
         // check first in local dir
-		if (file_exists("composer.phar")) {
+        if (file_exists("composer.phar")) {
             return "composer.phar";
         }
-        
-		$composerExecs = array('composer.phar', 'composer');
-		
-		foreach($composerExecs as $composerExec){
-			
-	        $pathToComposer = exec(sprintf("which %s", $composerExec));
-	
-	        if (file_exists($pathToComposer)) {
-	            return $pathToComposer;
-	        }
-		}
-		
+
+        $composerExecs = array('composer.phar', 'composer');
+
+        foreach ($composerExecs as $composerExec) {
+
+            $pathToComposer = exec(sprintf("which %s", $composerExec));
+
+            if (file_exists($pathToComposer)) {
+                return $pathToComposer;
+            }
+        }
+
         return false;
     }
     /**
      * Create a composer Instance
      *
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    protected static function createComposer(InputInterface $input, OutputInterface $output) {
+    protected static function createComposer(InputInterface $input, OutputInterface $output)
+    {
         $HelperSet = new HelperSet();
+
         return Composer\Factory::create(
                 new Composer\IO\ConsoleIO($input, $output, $HelperSet)
         );
@@ -61,7 +61,8 @@ class ComposerAdapter{
      * Check for composer in Namespace
      * and include via phar if possible
      */
-    public static function checkComposer($pathToComposer = null) {
+    public static function checkComposer($pathToComposer = null)
+    {
         if (!class_exists("Composer\Factory")) {
             if (false === $pathToComposer = self::whichComposer($pathToComposer)) {
                 throw new \RuntimeException("Could not find composer.phar");
@@ -72,7 +73,7 @@ class ComposerAdapter{
             $loader->registerNamespaces(array_merge(
                 array(
                     'Composer' => "phar://composer.phar/src/"
-                ), 
+                ),
                 $namespaces
             ));
             $loader->register(true);
@@ -81,11 +82,12 @@ class ComposerAdapter{
     /**
      * Returns a instance of composer
      *
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
-     * @param unknown_type $pathToComposer
+     * @param unknown_type    $pathToComposer
      */
-    public static function getComposer(InputInterface $input, OutputInterface $output, $pathToComposer = null, $required = true) {
+    public static function getComposer(InputInterface $input, OutputInterface $output, $pathToComposer = null, $required = true)
+    {
         if (null === self::$composer) {
             self::checkComposer($pathToComposer);
             $output->write("Initializing composer ... ");
@@ -101,6 +103,7 @@ class ComposerAdapter{
             }
             $output->writeln("<info>done</info>.");
         }
+
         return self::$composer;
     }
 }
