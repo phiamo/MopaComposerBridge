@@ -35,8 +35,8 @@ class ComposerPathFinder
 
     protected function isPackageInstalled(PackageInterface $package)
     {
-        foreach ($this->composer->getRepositoryManager()
-                ->getLocalRepositories() as $repo) {
+        foreach (array($this->composer->getRepositoryManager()
+                ->getLocalRepository()) as $repo) {
             $installer = $this->composer->getInstallationManager()
                                 ->getInstaller($package->getType());
 
