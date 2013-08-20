@@ -7,6 +7,9 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\ClassLoader\UniversalClassLoader;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
+
 /**
  * ComposerAdapter to support Composer in symfony2 console apps
  * If Composer is not installed via vendors it checks for a composer.phar in $pathToComposer and environment
@@ -25,13 +28,14 @@ class ComposerAdapter
         if (file_exists($pathToComposer)) {
             return $pathToComposer;
         }
-        // check first in local dir
-        if (file_exists("composer.phar")) {
-            return "composer.phar";
+        if (file_exists('composer.phar')) {
+            return 'composer.phar';
         }
-
+        if (file_exists('../composer.phar')) {
+            return '../composer.phar';
+        }
         $composerExecs = array('composer.phar', 'composer');
-
+        
         foreach ($composerExecs as $composerExec) {
 
             $pathToComposer = exec(sprintf("which %s", $composerExec));
@@ -86,8 +90,14 @@ class ComposerAdapter
      * @param OutputInterface $output
      * @param unknown_type    $pathToComposer
      */
-    public static function getComposer(InputInterface $input, OutputInterface $output, $pathToComposer = null, $required = true)
+    public static function getComposer(InputInterface $input = null, OutputInterface $output = null, $pathToComposer = null, $required = true)
     {
+        if ($input == null) {
+            $input = new ArrayInput(array());
+        }
+        if ($output == null) {
+            $output = new NullOutput();
+        }
         if (null === self::$composer) {
             self::checkComposer($pathToComposer);
             $output->write("Initializing composer ... ");
@@ -95,11 +105,8 @@ class ComposerAdapter
                 self::$composer = self::createComposer($input, $output);
             } catch (\InvalidArgumentException $e) {
                 if ($required) {
-                    $output->write($e->getMessage());
-                    exit(1);
+                    throw $e;
                 }
-
-                return;
             }
             $output->writeln("<info>done</info>.");
         }

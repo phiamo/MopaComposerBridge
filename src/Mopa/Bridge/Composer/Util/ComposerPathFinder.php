@@ -37,7 +37,7 @@ class ComposerPathFinder
     /**
      * return PackageInterface
      */
-    protected function findPackage($packageName)
+    public function findPackage($packageName)
     {
         $packages = $this->composer->getRepositoryManager()->getLocalRepository()->findPackages($packageName, null);
         foreach ($packages as $package) {
