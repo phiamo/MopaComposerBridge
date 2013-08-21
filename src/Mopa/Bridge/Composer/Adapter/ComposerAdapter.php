@@ -35,10 +35,12 @@ class ComposerAdapter
             return '../composer.phar';
         }
         $composerExecs = array('composer.phar', 'composer');
-        
+
+        $isUnix = DIRECTORY_SEPARATOR == '/' ? true : false;
+
         foreach ($composerExecs as $composerExec) {
 
-            $pathToComposer = exec(sprintf("which %s", $composerExec));
+            $pathToComposer = exec(sprintf($isUnix ? "which %s" : "for %%i in (%s) do @echo.%%~\$PATH:i", $composerExec));
 
             if (file_exists($pathToComposer)) {
                 return $pathToComposer;
