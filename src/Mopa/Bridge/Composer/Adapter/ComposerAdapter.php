@@ -55,12 +55,13 @@ class ComposerAdapter
      * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    protected static function createComposer(InputInterface $input, OutputInterface $output)
+    protected static function createComposer(InputInterface $input, OutputInterface $output, $localConfig = null)
     {
         $HelperSet = new HelperSet();
 
         return Composer\Factory::create(
-                new Composer\IO\ConsoleIO($input, $output, $HelperSet)
+                new Composer\IO\ConsoleIO($input, $output, $HelperSet),
+                $localConfig
         );
     }
     /**
@@ -92,7 +93,7 @@ class ComposerAdapter
      * @param OutputInterface $output
      * @param unknown_type    $pathToComposer
      */
-    public static function getComposer(InputInterface $input = null, OutputInterface $output = null, $pathToComposer = null, $required = true)
+    public static function getComposer(InputInterface $input = null, OutputInterface $output = null, $pathToComposer = null, $required = true, $localConfig = null)
     {
         if ($input == null) {
             $input = new ArrayInput(array());
@@ -104,7 +105,7 @@ class ComposerAdapter
             self::checkComposer($pathToComposer);
             $output->write("Initializing composer ... ");
             try {
-                self::$composer = self::createComposer($input, $output);
+                self::$composer = self::createComposer($input, $output, $localConfig);
             } catch (\InvalidArgumentException $e) {
                 if ($required) {
                     throw $e;
