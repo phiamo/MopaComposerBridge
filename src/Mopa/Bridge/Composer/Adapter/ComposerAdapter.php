@@ -2,11 +2,10 @@
 namespace Mopa\Bridge\Composer\Adapter;
 
 use Composer;
-use Composer\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\ClassLoader\UniversalClassLoader;
+use Symfony\Component\ClassLoader\ClassLoader;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
@@ -16,12 +15,16 @@ use Symfony\Component\Console\Output\NullOutput;
  */
 class ComposerAdapter
 {
+    /**
+     * @var Composer\Composer
+     */
     protected static $composer;
-    protected static $application;
+
     /**
      * Find a composer.phar in given path or in environment
      *
-     * @param unknown_type $pathToComposer
+     * @param string $pathToComposer
+     * @return bool|string
      */
     public static function whichComposer($pathToComposer)
     {
@@ -49,6 +52,7 @@ class ComposerAdapter
 
         return false;
     }
+
     /**
      * Create a composer Instance
      *
@@ -70,12 +74,12 @@ class ComposerAdapter
      */
     public static function checkComposer($pathToComposer = null)
     {
-        if (!class_exists("Composer\Factory")) {
+        if (!class_exists('Composer\Factory')) {
             if (false === $pathToComposer = self::whichComposer($pathToComposer)) {
                 throw new \RuntimeException("Could not find composer.phar");
             }
             \Phar::loadPhar($pathToComposer, 'composer.phar');
-            $loader = new UniversalClassLoader();
+            $loader = new ClassLoader();
             $namespaces = include("phar://composer.phar/vendor/composer/autoload_namespaces.php");
             $loader->registerNamespaces(array_merge(
                 array(
@@ -86,12 +90,14 @@ class ComposerAdapter
             $loader->register(true);
         }
     }
+
     /**
      * Returns a instance of composer
      *
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
-     * @param unknown_type    $pathToComposer
+     * @param string $pathToComposer
+     * @return Composer\Composer
      */
     public static function getComposer(InputInterface $input = null, OutputInterface $output = null, $pathToComposer = null, $required = true, $localConfig = null)
     {
