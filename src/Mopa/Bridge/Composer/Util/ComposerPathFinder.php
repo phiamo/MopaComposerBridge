@@ -15,6 +15,7 @@ class ComposerPathFinder
     {
         $this->composer = $composer;
     }
+    
     public function getSymlinkFromComposer($targetPackageName, $sourcePackageName, array $options)
     {
         if (null === $targetPackage = $this->findPackage($targetPackageName)) {
@@ -28,7 +29,7 @@ class ComposerPathFinder
 
     protected function isPackageInstalled(PackageInterface $package)
     {
-        $repo = $this->composer->getRepositoryManager()->getLocalRepository(); 
+        $repo = $this->composer->getRepositoryManager()->getLocalRepository();
         $installer = $this->composer->getInstallationManager()
                           ->getInstaller($package->getType());
 
@@ -39,6 +40,11 @@ class ComposerPathFinder
      */
     public function findPackage($packageName)
     {
+        // Check if it is this package
+        if ($this->composer->getPackage()->getName() === $packageName) {
+            return $this->composer->getPackage();
+        }
+
         $packages = $this->composer->getRepositoryManager()->getLocalRepository()->findPackages($packageName, null);
         foreach ($packages as $package) {
             if ($this->isPackageInstalled($package)) {
@@ -49,11 +55,9 @@ class ComposerPathFinder
     protected function generateSymlink($targetPackage, $sourcePackage, $options)
     {
         $options = array_merge($this->getDefaultOptions(), $options);
-        $sourcePackagePath = $this->composer->getInstallationManager()->getInstallPath($sourcePackage);
-        $targetPackagePath = $this->composer->getInstallationManager()->getInstallPath($targetPackage);
+        $symlinkTarget = $this->getPackagePath($sourcePackage);
+        $symlinkName = $this->getPackagePath($targetPackage);
 
-        $symlinkTarget = realpath($sourcePackagePath);
-        $symlinkName = realpath($targetPackagePath);
         // add source prefix
         // win doesnt support relative filenames
         if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
@@ -79,6 +83,16 @@ class ComposerPathFinder
 
         return str_pad("", count($arFrom) * 3, '..'.$ps).implode($ps, $arTo);
     }
+
+    protected function getPackagePath($package)
+    {
+        if ($package === $this->composer->getPackage()) {
+            return dirname($this->composer->getConfig()->get('home'));
+        }
+
+        return $this->composer->getInstallationManager()->getInstallPath($package);
+    }
+
     protected function getDefaultOptions()
     {
         return array(
