@@ -17,3 +17,5 @@ if(false !== $composer = ComposerAdapter::getComposer($input, $output)) {
     // $composer is now a fully setup instance of composer
 }
 ```
+
+Mac users using the composer homebrew version, might have to install composer.phar in the project directory to be able to e.g. use the symlink command in https://github.com/phiamo/MopaBootstrapBundle/
