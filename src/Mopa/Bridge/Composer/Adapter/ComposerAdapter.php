@@ -81,7 +81,7 @@ class ComposerAdapter
             \Phar::loadPhar($pathToComposer, 'composer.phar');
             $loader = new ClassLoader();
             $namespaces = include("phar://composer.phar/vendor/composer/autoload_namespaces.php");
-            $loader->registerNamespaces(array_merge(
+            $loader->addPrefixes(array_merge(
                 array(
                     'Composer' => "phar://composer.phar/src/"
                 ),
